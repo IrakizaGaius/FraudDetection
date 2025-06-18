@@ -181,6 +181,4 @@ Confusion Matrix
 
 ## Project Walkthrough Video
 
-A 5-minute video presentation covering the dataset summary, model architectures, optimization strategies, and performance comparisons will be linked here:
-
-📹 [Link to Video Presentation]
+A 5-minute video presentation covering the dataset summary, model architectures, optimization strategies, and performance comparisons will be linked here: [https://drive.google.com/file/d/1E7Ovvlo8VPaTpsDYaauokFYuS_Z3Iw1h/view?usp=sharing](https://drive.google.com/file/d/1E7Ovvlo8VPaTpsDYaauokFYuS_Z3Iw1h/view?usp=sharing) also a video is appended to the github.
