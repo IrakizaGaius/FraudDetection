@@ -1,0 +1,8 @@
+pandas
+numpy
+matplotlib
+lightgbm
+scikit-learn
+category_encoders
+joblib
+tensorflow

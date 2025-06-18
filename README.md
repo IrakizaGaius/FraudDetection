@@ -65,19 +65,23 @@ This table summarizes the **key hyperparameters** used in training a LightGBM cl
 
 I conducted a series of experiments to optimize my neural network models. The table below summarizes the configurations tested, with performance metrics to be populated upon completion of training on the test split of the dataset.
 
-| Instance | Optimizer | Regularizer | Epochs | Early Stopping | Layers | Learning Rate | Accuracy | F1-score | Precision | Recall |
-| :------- | :-------- | :---------- | :----- | :------------- | :----- | :------------ | :------- | :------- | :-------- | :----- |
-| 1        | -         | -           | -      | No             | 2      | Default       |          |          |           |        |
-| 2        | Adam      | L2          | 20     | Yes            | 3      | 0.001         |          |          |           |        |
-| 3        | RMSprop   | L1          | 30     | No             | 4      | 0.0005        |          |          |           |        |
-| 4        | Adam      | L1 + L2     | 15     | Yes            | 5      | 0.0001        |          |          |           |        |
-| 5        | SGD       | L2          | 25     | No             | 3      | 0.01          |          |          |           |        |
+**Disclaimer:**
+
+All the metrics recorded below Focus on the ability of the model to detect **fraudulent transactions on the test data of my dataset.** since due to a very high imbalance of my dataset which also reflect real transactions made. I Found out that it would be meaningless to record the **Not Fraud metrics** due to it having the highest recurring data which makes the model usually inflated due to class imbalance and aren't helpful for my model evaluation focus.
+
+| Instance | Optimizer | Regularizer | Epochs      | Early Stopping                   | Layers | Learning Rate | Accuracy(Test data) | F1-score(Test data) | Precision(Test data) | Recall(Test data) |
+| :------- | :-------- | :---------- | :---------- | :------------------------------- | :----- | :------------ | :------------------ | :------------------ | :------------------- | :---------------- |
+| 1        | Default   | Default     | Default (1) | No                               | 4      | Default       | 0.97                | 0.46                | 0.72                 | 0.34              |
+| 2        | Adam      | L2          | 50          | Yes (Patience = 10 on val_loss) | 4      | 0.0001        | 0.98                | 0.62                | 0.79                 | 0.51              |
+| 3        | RMSprop   | L1, Dropout | 100         | Yes (Patience = 10 on val_loss) | 5      | 0.0002        | 0.97                | 0.47                | 0.81                 | 0.34              |
+| 4        | SGD       | L2          | 150         | Yes                              | 5      | 0.01          |                     |                     |                      |                   |
+| 5        | Nadam     | L1 + L2     | 300         | Yes                              | 7      | 0.005         |                     |                     |                      |                   |
 
 ## Findings Summary
 
 ### Neural Network Performance
 
-Our most effective neural network configuration, designated as  **Instance 2** , leveraged the following parameters:
+My most effective neural network configuration, designated as  **Instance 2** , leveraged the following parameters:
 
 * **Optimizer:** Adam
 * **Regularization:** L2
@@ -85,17 +89,6 @@ Our most effective neural network configuration, designated as  **Instance 2** ,
 * **Early Stopping:** Enabled
 * **Layers:** 3
 * **Learning Rate:** 0.001
-
-### Model Type Comparison(Test Data))
-
-Here's how the best-performing models from different categories stack up:
-
-| Model Type               | Accuracy | F1-score | Comments                                  |
-| :----------------------- | :------- | :------- | :---------------------------------------- |
-| **Neural Network** | X.XX     | X.XX     | Performed better with fine-tuninLightGbm, |
-| LightGbm Model           | X.XX     | X.XX     | Solid baseline, but less precise          |
-
----
 
 ## Data Splitting Strategy
 
@@ -115,40 +108,57 @@ All trained models are stored in the `saved_models/` directory:
 * `nn_instance2.h5`
 * `nn_instance3.h5`
 * `nn_instance4.h5`
-* lightgbm_model.joblib
+* `lightgbm_model.joblib`
 
 ---
 
-## How to Run This Project
+## How To run this Project
 
-To set up and run the project:
+This project builds and evaluates various machine learning models, including LightGBM and neural networks, to detect fraudulent transactions.
 
-1. **Clone the repository:**
-   **Bash**
+### Getting Started
 
-   ```
-   git clone <your-repo-link>
-   cd <project-directory>
-   ```
-2. **Install dependencies:**
-   **Bash**
+Follow these steps to set up your environment and run the code.
 
-   ```
-   pip install -r requirements.txt
-   ```
-3. **Launch the notebook:**
-   **Bash**
+### 1. Clone the Repository
 
-   ```
-   jupyter notebook notebook.ipynb
-   ```
-4. **To load a saved model** (e.g., `nn_instance2.h5`):
-   **Python**
+**1. git clone <https://github.com/IrakizaGaius/FraudDetection.git>**
 
-   ```
-   from tensorflow.keras.models import load_model
-   model = load_model('saved_models/nn_instance2.h5')
-   ```
+cd Fraud Detectionetection
+
+**2. Create and Activate a Virtual Environment (Recommended)**
+Create a virtual environment to manage dependencies:
+
+python -m venv .venv
+
+**3. Activate the virtual environment:**
+
+**On macOS/Linux** :
+
+source .venv/bin/activate
+
+**On Windows** :
+
+.venv\Scripts\activate
+**4. Install Dependencies**
+
+Install the required libraries using:
+
+pip install -r requirements.txt
+**5. Run the Project**
+
+After setting up your environment, you can execute the training scripts or notebooks provided to train and evaluate the models.
+
+**Models Used**:
+**LightGBM** with tuned hyperparameters
+**Neural Networks** (with different configurations including dropout, regularization, and optimizers)
+
+**Evaluation Metrics**
+Accuracy
+Precision
+Recall
+F1-Score
+Confusion Matrix
 
 ---
 
