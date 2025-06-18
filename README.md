@@ -69,28 +69,45 @@ I conducted a series of experiments to optimize my neural network models. The ta
 
 All the metrics recorded below Focus on the ability of the model to detect **fraudulent transactions on the test data of my dataset.** since due to a very high imbalance of my dataset which also reflect real transactions made. I Found out that it would be meaningless to record the **Not Fraud metrics** due to it having the highest recurring data which makes the model usually inflated due to class imbalance and aren't helpful for my model evaluation focus.
 
-| Instance | Optimizer | Regularizer | Epochs      | Early Stopping                   | Layers | Learning Rate | Accuracy(Test data) | F1-score(Test data) | Precision(Test data) | Recall(Test data) |
-| :------- | :-------- | :---------- | :---------- | :------------------------------- | :----- | :------------ | :------------------ | :------------------ | :------------------- | :---------------- |
-| 1        | Default   | Default     | Default (1) | No                               | 4      | Default       | 0.97                | 0.46                | 0.72                 | 0.34              |
-| 2        | Adam      | L2          | 50          | Yes (Patience = 10 on val_loss) | 4      | 0.0001        | 0.98                | 0.62                | 0.79                 | 0.51              |
-| 3        | RMSprop   | L1, Dropout | 100         | Yes (Patience = 10 on val_loss) | 5      | 0.0002        | 0.97                | 0.47                | 0.81                 | 0.34              |
-| 4        | SGD       | L2          | 150         | Yes                              | 5      | 0.01          |                     |                     |                      |                   |
-| 5        | Nadam     | L1 + L2     | 300         | Yes                              | 7      | 0.005         |                     |                     |                      |                   |
+| Instance | Optimizer | Regularizer                                                              | Epochs      | Early Stopping                    | Layers | Learning Rate | Accuracy(Test data) | F1-score(Test data) | Precision(Test data) | Recall(Test data) |
+| :------- | :-------- | :----------------------------------------------------------------------- | :---------- | :-------------------------------- | :----- | :------------ | :------------------ | :------------------ | :------------------- | :---------------- |
+| 1        | Default   | Default                                                                  | Default (1) | No                                | 6      | Default       | 0.97                | 0.38                | 0.87                 | 0.24              |
+| 2        | Adam      | L2(0.0001)on every hidden layer                                          | 50          | Yes (Patience = 10 on val_loss)  | 6      | 0.0001        | 0.98                | 0.63                | 0.82                 | 0.51              |
+| 3        | RMSprop   | L1,<br />Dropout[0.2, 0.1, 0.1, 0.05, 0.0] After each Layer respectively | 100         | Yes (Patience = 10 on val_loss)  | 6      | 0.0001        | 0.97                | 0.47                | 0.80                 | 0.33              |
+| 4        | SGD       | L2                                                                       | 150         | Yes (Patience = 10 on val_loss) | 6      | 0.01          | 0.98                | 0.55                | 0.81                 | 0.42              |
+| 5        | Nadam     | L2                                                                       | 300         | Yes (Patience = 10 on val_loss) | 6      | 0.005         | 0.98                | 0.64                | 0.80                 | 0.53              |
 
 ## Findings Summary
 
-### Neural Network Performance
+### Best Neural Network Performance
 
-My most effective neural network configuration, designated as  **Instance 2** , leveraged the following parameters:
+The most effective neural network configuration was  **Instance 5** , which achieved the **highest F1-score** on the test set — the most reliable indicator in imbalanced classification tasks. This model managed to balance both **precision** and  **recall** , making it more practical for real-world fraud detection use, where catching frauds (recall) without triggering too many false alarms (precision) is key.
 
-* **Optimizer:** Adam
+**Top Model (Instance 5):**
+
+* **Optimizer:** Nadam
 * **Regularization:** L2
-* **Epochs:** 20
-* **Early Stopping:** Enabled
-* **Layers:** 3
-* **Learning Rate:** 0.001
+* **Epochs:** Up to 300 (Early Stopping applied)
+* **Early Stopping:** Enabled (Patience = 10 on `val_loss`)
+* **Layers:** 6
+* **Learning Rate:** 0.005
+* **Test Metrics:**
+  * **F1-score:** 0.64 (Best)
+  * **Precision:** 0.80
+  * **Recall:** 0.53
+  * **Accuracy:** 0.98
 
-## Data Splitting Strategy
+### Conclusion
+
+The experiments demonstrated that  **model architecture** ,  **regularization** , and particularly the **choice of optimizer and learning rate** significantly impacted performance. Among all instances, **Instance 5** achieved the best fraud detection trade-off. It outperformed other models in terms of  **F1-score** , meaning it struck a better balance between catching fraudulent cases and avoiding false alarms.
+
+Although accuracy remained high across all models due to class imbalance, it was **not a reliable indicator** for model effectiveness in fraud detection. Instead, **Instance 5's balance of high precision and reasonable recall** indicates it is well-suited for practical deployment or further tuning for production scenarios.
+
+### Comparison between the lightGBM model and Neural network best performer model
+
+In evaluating multiple models on the highly imbalanced IEEE fraud detection dataset, LightGBM (Instance 6) outperformed all neural network architectures tested, including the best-performing neural net (Instance 5), by achieving an outstanding F1-score of 0.8120, with precision of 0.84 and recall of 0.78. While Instance 5, a deep neural network with Nadam optimizer, L2 regularization, and batch normalization, showed solid results (F1-score of 0.6358), it was ultimately surpassed by LightGBM’s superior handling of class imbalance and structured data. LightGBM’s gradient boosting framework naturally focused learning on minority (fraudulent) cases and captured complex patterns with minimal tuning, making it the most effective model for fraud detection in this study.
+
+### Data Splitting Strategy
 
 The dataset was divided into the following proportions for training, validation, and testing:
 
@@ -104,10 +121,10 @@ The dataset was divided into the following proportions for training, validation,
 
 All trained models are stored in the `saved_models/` directory:
 
-* `nn_instance1.h5`
-* `nn_instance2.h5`
-* `nn_instance3.h5`
-* `nn_instance4.h5`
+* `nn_instance1.keras`
+* `nn_instance2.keras`
+* `nn_instance3.keras`
+* `nn_instance4.keras`
 * `lightgbm_model.joblib`
 
 ---
@@ -122,7 +139,7 @@ Follow these steps to set up your environment and run the code.
 
 ### 1. Clone the Repository
 
-**1. git clone <https://github.com/IrakizaGaius/FraudDetection.git>**
+**1. git clone [https://github.com/IrakizaGaius/FraudDetection.git](https://github.com/IrakizaGaius/FraudDetection.git)**
 
 cd Fraud Detectionetection
 
